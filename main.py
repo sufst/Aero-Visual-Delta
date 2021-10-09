@@ -28,12 +28,12 @@ def showim(im):
         cv.destroyWindow("the image")
 
 #Just so you can show two images at once and they will fit on the screen
-def hstack_images(im1, im2):
-    im1 = np.array(im1)
-    im2 = np.array(im2)
-    im1 = cv.resize(im1, (0, 0), None, 0.25, 0.25)
-    im2 = cv.resize(im2, (0, 0), None, 0.25, 0.25)
-    stacked = np.hstack((im1, im2))
+def hstack_images(image1, image2):
+    image1 = np.array(image1)
+    image2 = np.array(image2)
+    image1 = cv.resize(image1, (0, 0), None, 0.25, 0.25)
+    image2 = cv.resize(image2, (0, 0), None, 0.25, 0.25)
+    stacked = np.hstack((image1, image2))
     return stacked
 
 def resize(im):
@@ -58,6 +58,8 @@ for i in range(0, unique_colours):
     #The cv.inRange function takes an input image, followed by two colours
     #and returns a matrix composed of 1s and 0s, 1 indicating that the pixel
     #at that index falls within the two colours
+    #Colours in image don't perfectly match the colours in scale so just multiply by 1.02
+    #to increase the range slightly
     mask1 = cv.inRange(im1, colours1[i] * 0.98, colours1[i] * 1.02)
     print("found ", len(np.nonzero(mask1)[0]), " pixels")
     #Edit the final matrix for image one, put the value in at all pixel
@@ -75,6 +77,8 @@ delta_matrix = np.ndarray((1080, 960, 3))
 
 
 for i, v in enumerate(vals):
+    #This should output an image composed of only the colours in the array colours1
+    #There should be NO white pixels
     delta_matrix[value_delta_matrix == v] = colours1[i]
 
 showim(resize(delta_matrix))
