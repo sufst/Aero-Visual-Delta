@@ -100,25 +100,39 @@ for i in range(0, unique_colours):
 #########################################
 def find_delta(matrix1, matrix2):
     #Just leaving this empty for now
-    delta = matrix1
     ##FOR EXAMPLE:
-    #delta = matrix2 - matrix2
-
+    delta = matrix2 - matrix1
     return delta
 
 value_delta_matrix = find_delta(final_matrix1, final_matrix2)
-""" 
+
 max = np.max(value_delta_matrix)
 min = np.min(value_delta_matrix)
 all_delta_vals = np.unique(value_delta_matrix)
 all_delta_vals = np.sort(all_delta_vals)
 delta_vals = np.linspace(min, max, 32)
-"""
+
+def get_closest(values, matrix):
+
+    #Get insert positions
+    shape = np.shape(matrix)
+    matrix = matrix.flatten()
+    idxs = np.searchsorted(values, matrix, side="left")
+    
+    #Find indexes where previous index is closer
+    #Hashtag Magic
+    prev_idx_is_less = ((idxs == len(values))|(np.fabs(matrix - values[np.maximum(idxs-1, 0)]) < np.fabs(matrix - values[np.minimum(idxs, len(values)-1)])))
+    idxs[prev_idx_is_less] -= 1
+    flattened = values[idxs]
+    rounded_matrix = np.reshape(flattened, shape)
+    return rounded_matrix
+
+value_delta_matrix = get_closest(delta_vals, value_delta_matrix)
 
 #Delta matrix will be constructed below to contain colours
 delta_matrix = np.ndarray((1080, 960, 3))
 
-for i, v in enumerate(vals):
+for i, v in enumerate(delta_vals):
     #This should output an image composed of only the colours in the array colours1
     #There should be NO white pixels
     #I am very stupid, values in image matrix must be normalised between 0 and 1
