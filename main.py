@@ -139,4 +139,12 @@ for i, v in enumerate(delta_vals):
     #MAX MAX MAX SUPER MAX MAX SUPER SUPER MAX
     delta_matrix[value_delta_matrix == v] = colours1[i] / 255
 
-showim(resize(delta_matrix))
+
+scale_image = np.ndarray((1080, 960, 3))
+scale_image[:,:] = [0, 0, 0]
+scale_image[125:765, 80:150] = colour_scale1 / 255
+
+cv.putText(scale_image, str(np.round(max, decimals=2)), (80, 120), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
+cv.putText(scale_image, str(np.round(min, decimals=2)), (80, 800), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
+delta_image = cv.hconcat([scale_image, delta_matrix])
+showim(resize(delta_image))
