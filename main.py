@@ -19,7 +19,10 @@ to colours found in the colour scale and match them, this will result in
 perfect reconstruction without the little black lines everywhere
 """
 
-
+#USER DEFINED
+min_delta_val = -0.5
+max_delta_val = 0.5
+#Delta values outside of the ranges specified above will be shown as the max delta colour.
 
 #Just for debugging
 ############################################################
@@ -51,7 +54,7 @@ def compare(delta):
     im = cv.imread("im1.png")
     im = im[:,960:,:] / 255
     stacked = hstack_images(im, delta)
-    showim(stacked)
+    #showim(stacked)
 ############################################################
 
 #In this function you should calculate the delta as you see fit
@@ -110,7 +113,7 @@ def make_delta(im1, im2):
     min = np.min(value_delta_matrix)
     all_delta_vals = np.unique(value_delta_matrix)
     all_delta_vals = np.sort(all_delta_vals)
-    delta_vals = np.linspace(min, max, 32)
+    delta_vals = np.linspace(min_delta_val, max_delta_val, 32)
 
     value_delta_matrix = get_closest(delta_vals, value_delta_matrix)
 
@@ -128,8 +131,8 @@ def make_delta(im1, im2):
     scale_image[:,:] = [0, 0, 0]
     scale_image[125:765, 80:150] = colour_scale1 / 255
 
-    cv.putText(scale_image, str(np.round(max, decimals=2)), (80, 120), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
-    cv.putText(scale_image, str(np.round(min, decimals=2)), (80, 800), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
+    cv.putText(scale_image, str(max_delta_val), (80, 120), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
+    cv.putText(scale_image, str(min_delta_val), (80, 800), cv.FONT_HERSHEY_COMPLEX, 2, [1,1,1])
 
     delta_image = cv.hconcat([scale_image, delta_matrix])
     return delta_image
@@ -175,12 +178,10 @@ if __name__ == "__main__":
             continue
 
         delta_image = np.array(make_delta(baseline, compare))
-        showim(resize(delta_image))
+        #showim(resize(delta_image))
         save_path = os.path.abspath(delta_path + os.sep + "delta%05d.png" % im_number)
         cv.imwrite(save_path, delta_image * 255)
 
 
     im1 = cv.imread("im1.png")
     im2 = cv.imread("im2.png")
-
-    
